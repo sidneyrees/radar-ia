@@ -4,15 +4,18 @@ PWA chica que junta los releases de tu stack de IA en un solo feed, en vez de
 revisar cada changelog por separado. Instalable (Add to Home Screen), se
 actualiza sola cada hora.
 
-**Fuentes** (todas vía GitHub Releases API): OpenClaw, PaperClip, Hermes
-Agent, Ollama, n8n, Kimi Code.
+**Fuentes**: OpenClaw, PaperClip, Hermes Agent, Ollama, n8n y Kimi Code vía
+GitHub Releases API. OpenAI vía su RSS oficial (`openai.com/news/rss.xml`),
+filtrado a posts categoría "Product" -- ese feed es el blog general de la
+empresa, no un changelog, así que el filtro es una heurística: puede
+perderse algún lanzamiento mal categorizado, o colar algún post de producto
+que no sea un release real. Ajustar `categoryFilter` en `lib/sources.ts` si
+en la práctica filtra mal.
 
-Se evaluaron y quedaron afuera por ahora: DeepSeek (sus lanzamientos abiertos
-están repartidos en ~35 repos sin un changelog único y persistente — V4 salió
-en un repo nuevo, no como release del repo de V3) y Claude/ChatGPT/Gemini/Grok
-como modelos (Anthropic no tiene RSS oficial; el RSS de OpenAI existe pero es
-el blog general de la empresa, no un changelog — mezcla lanzamientos con
-notas de prensa, partnerships y casos de cliente). Ver "Sumar una fuente".
+Quedaron afuera: DeepSeek (sus lanzamientos abiertos están repartidos en ~35
+repos sin un changelog único y persistente -- V4 salió en un repo nuevo, no
+como release del repo de V3) y Claude/Gemini/Grok como modelos (no publican
+releases en GitHub ni tienen RSS oficial). Ver "Sumar una fuente".
 
 ## Stack
 
@@ -32,14 +35,18 @@ Abre `http://localhost:3000`.
 
 ## Sumar una fuente
 
-Si el proyecto está en GitHub, editá `lib/sources.ts` y agregá una entrada
-con `owner`, `repo` (los de la URL `github.com/<owner>/<repo>`) y un color.
-Nada más — se suma sola al feed y al filtro.
+Dos tipos, ambos en `lib/sources.ts`:
 
-Para fuentes que **no** son un repo de GitHub (Claude, ChatGPT, Gemini,
-DeepSeek, Kimi, Grok, etc.) hace falta un fetcher distinto por proveedor
-(RSS si publican uno, o parseo de su página de changelog). `lib/fetchChangelog.ts`
-es el lugar para sumar ese segundo tipo de fuente cuando se quiera encarar.
+- **`kind: "github"`** -- un repo público con Releases. Agregá `owner`,
+  `repo` (los de `github.com/<owner>/<repo>`) y un color. Nada más.
+- **`kind: "rss"`** -- un feed RSS/Atom. Agregá `url` y un color; si el feed
+  mezcla contenido que no es release (como el de OpenAI), sumá
+  `categoryFilter: ["categoria1", "categoria2"]` con las categorías reales
+  del feed (mirá el XML crudo para saber cuáles usa).
+
+Si una fuente no tiene ni Releases de GitHub ni RSS (scraping de una página
+de changelog HTML), hace falta un tercer tipo de fetcher -- no está
+implementado todavía. `lib/fetchChangelog.ts` es el lugar.
 
 ## Rate limit de GitHub
 
