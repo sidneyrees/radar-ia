@@ -1,17 +1,5 @@
 import { Source } from "./types";
 
-/**
- * Fuentes rastreadas. Dos tipos:
- * - kind: "github" -- un repo público con Releases. Para sumar una,
- *   verificá owner/repo en github.com/<owner>/<repo>/releases.
- * - kind: "rss" -- un feed RSS/Atom. Sumá categoryFilter si el feed mezcla
- *   contenido que no es release (ver el caso de OpenAI abajo).
- *
- * Nota: DeepSeek no tiene un repo único con Releases persistente (sus
- * lanzamientos abiertos están repartidos en ~35 repos, uno nuevo por
- * versión mayor). Anthropic no tiene RSS oficial. Ver README, sección
- * "Sumar una fuente".
- */
 export const SOURCES: Source[] = [
   { kind: "github", id: "openclaw", label: "OpenClaw", owner: "openclaw", repo: "openclaw", color: "#FF8A65" },
   { kind: "github", id: "paperclip", label: "PaperClip", owner: "paperclipai", repo: "paperclip", color: "#7FD99A" },
@@ -19,6 +7,7 @@ export const SOURCES: Source[] = [
   { kind: "github", id: "ollama", label: "Ollama", owner: "ollama", repo: "ollama", color: "#C792EA" },
   { kind: "github", id: "n8n", label: "n8n", owner: "n8n-io", repo: "n8n", color: "#EA4B71" },
   { kind: "github", id: "kimi-code", label: "Kimi Code", owner: "MoonshotAI", repo: "kimi-code", color: "#E0B33C" },
+  { kind: "github", id: "gemini-cli", label: "Gemini CLI", owner: "google-gemini", repo: "gemini-cli", color: "#4285F4" },
   {
     kind: "rss",
     id: "openai",
@@ -26,5 +15,22 @@ export const SOURCES: Source[] = [
     url: "https://openai.com/news/rss.xml",
     color: "#74AA9C",
     categoryFilter: ["product"],
+  },
+  {
+    kind: "rss",
+    id: "claude-code",
+    label: "Claude Code",
+    url: "https://raw.githubusercontent.com/anthropics/claude-code/main/feed.xml",
+    color: "#D97757",
+    format: "atom",
+  },
+  {
+    kind: "markdown",
+    id: "claude-platform",
+    label: "Claude",
+    url: "https://platform.claude.com/docs/en/release-notes/overview.md",
+    pageUrl: "https://platform.claude.com/docs/en/release-notes/overview",
+    color: "#CC785C",
+    format: "dated-bullets",
   },
 ];

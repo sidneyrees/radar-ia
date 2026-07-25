@@ -13,11 +13,21 @@ export type RssSource = {
   label: string;
   url: string;
   color: string;
-  /** Si está presente, solo entran items cuya <category> matchee alguna de estas (case-insensitive). */
+  format?: "rss" | "atom";
   categoryFilter?: string[];
 };
 
-export type Source = GithubSource | RssSource;
+export type MarkdownSource = {
+  kind: "markdown";
+  id: string;
+  label: string;
+  url: string;
+  color: string;
+  pageUrl: string;
+  format: "dated-bullets";
+};
+
+export type Source = GithubSource | RssSource | MarkdownSource;
 
 export type ReleaseItem = {
   id: string;
@@ -27,12 +37,12 @@ export type ReleaseItem = {
   version: string;
   title: string;
   url: string;
-  publishedAt: string; // ISO date
+  publishedAt: string;
   excerpt: string;
 };
 
 export type ChangelogResult = {
   items: ReleaseItem[];
   failedSources: string[];
-  fetchedAt: string; // ISO date
+  fetchedAt: string;
 };
