@@ -4,12 +4,15 @@ PWA chica que junta los releases de tu stack de IA en un solo feed, en vez de
 revisar cada changelog por separado. Instalable (Add to Home Screen), se
 actualiza sola cada hora.
 
-**Fuentes v1** (todas vía GitHub Releases API): OpenClaw, PaperClip, Hermes
-Agent, Ollama, n8n.
+**Fuentes** (todas vía GitHub Releases API): OpenClaw, PaperClip, Hermes
+Agent, Ollama, n8n, Kimi Code.
 
-Herramientas cerradas (Claude, ChatGPT, Gemini, DeepSeek, Kimi, Grok) no
-publican releases en GitHub — necesitan otra fuente (RSS o scraping de su
-página de changelog). Queda como próximo paso, ver "Sumar una fuente" abajo.
+Se evaluaron y quedaron afuera por ahora: DeepSeek (sus lanzamientos abiertos
+están repartidos en ~35 repos sin un changelog único y persistente — V4 salió
+en un repo nuevo, no como release del repo de V3) y Claude/ChatGPT/Gemini/Grok
+como modelos (Anthropic no tiene RSS oficial; el RSS de OpenAI existe pero es
+el blog general de la empresa, no un changelog — mezcla lanzamientos con
+notas de prensa, partnerships y casos de cliente). Ver "Sumar una fuente".
 
 ## Stack
 
@@ -40,7 +43,7 @@ es el lugar para sumar ese segundo tipo de fuente cuando se quiera encarar.
 
 ## Rate limit de GitHub
 
-La API de GitHub sin autenticar permite 60 requests/hora por IP. Con 5
+La API de GitHub sin autenticar permite 60 requests/hora por IP. Con 6
 fuentes y revalidación cada hora, en uso normal esto alcanza de sobra. Si en
 producción empezás a ver "no se pudo cargar" seguido (Vercel comparte rangos
 de IP entre proyectos), generá un
