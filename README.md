@@ -134,3 +134,13 @@ una pestaña de Safari suelta. Android/Chrome no tiene esa restricción.
 
 Pensado para Vercel: importá el repo en vercel.com/new, sin configuración
 adicional. El `GITHUB_TOKEN` de arriba es opcional.
+
+**Usá siempre la URL de producción, no una de deployment.** Cada
+deployment (cada push) tiene su propia URL única, y a veces Vercel te
+lleva ahí directo desde el dashboard (botón "Visit" al lado de un
+deployment puntual). El service worker, el estado de "instalada" como PWA,
+y el permiso de notificaciones quedan atados al origen exacto -- entrar
+por una URL de deployment distinta cada vez es, para el navegador, un
+sitio nuevo cada vez. La URL estable está en Project → **Domains** (por
+default algo como `<nombre-repo>.vercel.app`) -- esa es la que se instala
+y se guarda como favorita.
