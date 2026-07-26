@@ -10,6 +10,7 @@ import {
 
 const RELEASES_PER_SOURCE = 5;
 const GITHUB_API = "https://api.github.com";
+const MAX_AGE_MONTHS = 3;
 
 function stripMarkdown(md: string, maxLen = 220): string {
   const text = md
@@ -223,7 +224,7 @@ async function fetchMarkdownSource(source: MarkdownSource): Promise<ReleaseItem[
 
   return rawItems.slice(0, RELEASES_PER_SOURCE).map((it, idx) => {
     const published = it.pubDate ? new Date(it.pubDate) : new Date();
-    const anchorSource = it.pubDate ? published.toDateString() : "";
+    const anchorSource = rawItems[idx].pubDate ? published.toDateString() : "";
     return {
       id: `${source.id}-${published.toISOString()}-${idx}`,
       sourceId: source.id,
@@ -258,7 +259,11 @@ export async function getChangelog(): Promise<ChangelogResult> {
     }
   });
 
-  items.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+  const cutoff = new Date();
+  cutoff.setMonth(cutoff.getMonth() - MAX_AGE_MONTHS);
+  const recentItems = items.filter((i) => new Date(i.publishedAt) >= cutoff);
 
-  return { items, failedSources, fetchedAt: new Date().toISOString() };
+  recentItems.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+
+  return { items: recentItems, failedSources, fetchedAt: new Date().toISOString() };
 }

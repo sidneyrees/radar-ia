@@ -1,6 +1,7 @@
 import { getChangelog } from "@/lib/fetchChangelog";
 import { SOURCES } from "@/lib/sources";
 import FeedClient from "./feed-client";
+import PushSubscribe from "./push-subscribe";
 import { relativeDate } from "@/lib/formatDate";
 
 export const revalidate = 3600;
@@ -17,6 +18,7 @@ export default async function Home() {
       <div className="header">
         <span className="blip" aria-hidden="true" />
         <span className="wordmark">Radar IA</span>
+        <PushSubscribe />
       </div>
       <p className="tagline">
         Lanzamientos de tu stack de IA en un solo feed — sin ir herramienta por herramienta.

@@ -80,6 +80,53 @@ seguido (Vercel comparte rangos de IP entre proyectos), generá un
 (alcanza con acceso de lectura a repos públicos) y agregalo en Vercel como
 variable de entorno `GITHUB_TOKEN`. Sube el límite a 5000/hora.
 
+## Se borran solas las noticias viejas
+
+Cualquier item de más de 3 meses se descarta en el servidor antes de armar
+el feed (`MAX_AGE_MONTHS` en `lib/fetchChangelog.ts`). No es una config de
+UI a propósito -- es lo que pediste, y tocar un solo número alcanza si en
+algún momento lo querés distinto.
+
+## Notificaciones push
+
+Aviso del sistema operativo cuando hay algo nuevo -- no hace falta tener la
+app abierta ni el celular "corriendo" nada en segundo plano; el chequeo lo
+hace el servidor y el aviso llega como cualquier notificación push.
+
+Necesita 3 variables de entorno que no vienen solas. Dos te las paso yo
+directo (no van commiteadas al repo público -- son secretas):
+
+- `NEXT_PUBLIC_VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` -- el par de claves
+  que autentican el envío. No dependen de ninguna cuenta ni proveedor, es
+  el protocolo Web Push en sí (estándar, gratis, lo genera cualquiera con
+  la librería `web-push`).
+- `CRON_SECRET` -- string random que asegura que solo el cron de Vercel
+  pueda disparar el chequeo (Vercel lo manda solo como header cuando existe
+  esta variable).
+
+Lo único que tenés que crear vos (gratis, sin tarjeta):
+
+- **Upstash Redis**, para guardar tu suscripción y qué ya se te avisó. En
+  el dashboard de Vercel: Project → Storage → Create Database → Upstash →
+  Redis (plan Free: 256MB, 500K comandos/mes -- para un solo usuario ni se
+  acerca al límite). Al conectarlo, Vercel agrega solo
+  `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN`.
+
+Con las 5 variables puestas en Vercel, redeploy. Entrá a la app y tocá
+"activar notificaciones" arriba a la derecha del header.
+
+**Por qué chequea 1 vez por día:** el cron nativo de Vercel (`vercel.json`)
+es gratis pero el plan Hobby lo limita a 1 corrida diaria -- más seguido
+pide plan Pro ($20/mes). El horario actual (13:00 UTC = 10am Argentina) se
+cambia editando `vercel.json`. Si en algún momento 1 vez por día se siente
+poco, la alternativa gratis es un GitHub Action en este mismo repo
+pegándole a `/api/cron/check` cada 1 hora en vez de depender del cron de
+Vercel -- no está armado todavía, es la primera mejora si hace falta.
+
+**iPhone:** Apple exige que la PWA esté agregada a la pantalla de inicio
+(Compartir → Agregar a inicio) para que el push funcione -- no anda desde
+una pestaña de Safari suelta. Android/Chrome no tiene esa restricción.
+
 ## Deploy
 
 Pensado para Vercel: importá el repo en vercel.com/new, sin configuración
