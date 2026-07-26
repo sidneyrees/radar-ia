@@ -31,9 +31,10 @@ Ver "Sumar una fuente" para el detalle de cada tipo.
 ## Stack
 
 Next.js 16 (App Router, TypeScript), cero dependencias de UI. CSS plano con
-variables. Sin base de datos: todo se resuelve server-side, con
-revalidación cada 1h (ISR). Fuentes self-hosted vía `@fontsource` (sin
-llamadas a Google Fonts).
+variables. El feed en sí no usa base de datos: se resuelve server-side,
+con revalidación cada 1h (ISR). Fuentes self-hosted vía `@fontsource` (sin
+llamadas a Google Fonts). Notificaciones push sí usan una base de datos
+(Neon) -- ver esa sección.
 
 ## Correr local
 
@@ -106,13 +107,15 @@ directo (no van commiteadas al repo público -- son secretas):
 
 Lo único que tenés que crear vos (gratis, sin tarjeta):
 
-- **Upstash Redis**, para guardar tu suscripción y qué ya se te avisó. En
-  el dashboard de Vercel: Project → Storage → Create Database → Upstash →
-  Redis (plan Free: 256MB, 500K comandos/mes -- para un solo usuario ni se
-  acerca al límite). Al conectarlo, Vercel agrega solo
-  `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN`.
+- **Neon** (Postgres), para guardar tu suscripción y qué ya se te avisó. En
+  el dashboard de Vercel: Project → Storage → Connect Store → Neon (elegí
+  tu cuenta/proyecto existente, o creá uno nuevo -- plan Free alcanza de
+  sobra para esto). Al conectarlo, Vercel agrega sola la variable
+  `DATABASE_URL`. Las tablas (`push_subscriptions`, `seen_items`) se crean
+  solas la primera vez que la app las necesita -- no hay que correr ningún
+  SQL a mano.
 
-Con las 5 variables puestas en Vercel, redeploy. Entrá a la app y tocá
+Con las 4 variables puestas en Vercel, redeploy. Entrá a la app y tocá
 "activar notificaciones" arriba a la derecha del header.
 
 **Por qué chequea 1 vez por día:** el cron nativo de Vercel (`vercel.json`)
